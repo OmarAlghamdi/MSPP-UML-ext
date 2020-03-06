@@ -10,9 +10,11 @@ namespace slide_looper
 {
     public partial class Ribbon
     {
+    
         private void Ribbon_Load(object sender, RibbonUIEventArgs e)
         {
-
+            
+        
         }
 
        
@@ -58,221 +60,285 @@ namespace slide_looper
 
         private void btn_class_Click(object sender, RibbonControlEventArgs e)
         {
-            using (ClassForm prompt = new ClassForm())
-            {
-                DialogResult result = prompt.ShowDialog();
-                if (result == DialogResult.OK)
-                {
-                    drawClass(prompt.name, prompt.fields, prompt.ops);
-                }
-            }
+            ClassDiagramFactory.getInstance().createClass();
 
         }
 
         private void btn_interface_Click(object sender, RibbonControlEventArgs e)
         {
-            using (InterfaceForm prompt = new InterfaceForm()) 
+            ClassDiagramFactory.getInstance().createInterface();
+        }
+
+        private void btn_associ_Click(object sender, RibbonControlEventArgs e)
+        {
+            ClassDiagramFactory.getInstance().createAssociation();
+        }
+
+        private void btn_aggr_Click(object sender, RibbonControlEventArgs e)
+        {
+            ClassDiagramFactory.getInstance().createAggregation();
+        }
+
+        private void btn_comps_Click(object sender, RibbonControlEventArgs e)
+        {
+            ClassDiagramFactory.getInstance().createComposition();
+        }
+
+        private void btn_gener_Click(object sender, RibbonControlEventArgs e)
+        {
+            ClassDiagramFactory.getInstance().createGeneralization();
+        }
+
+        private void btn_impl_Click(object sender, RibbonControlEventArgs e)
+        {
+            ClassDiagramFactory.getInstance().createImplementation();
+        }
+    }
+
+    internal class ClassDiagramFactory
+    {
+        private const int ASSOCIATION = 0;
+        private const int AGGREGATION = 1;
+        private const int COMPOSTION = 2;
+        private const int GENERALIZATION = 3;
+        private const int IMPLEMENTATION = 4;
+
+        private static ClassDiagramFactory INSTANCE = new ClassDiagramFactory();
+        private int objectCount = 0; // diffrentiate object with same name
+
+        private ClassDiagramFactory()
+        {
+    
+        }
+
+        public static ClassDiagramFactory getInstance()
+        {
+            return INSTANCE;
+        }
+
+        public void createClass()
+        {
+            using (ClassForm prompt = new ClassForm())
             {
                 DialogResult result = prompt.ShowDialog();
                 if (result == DialogResult.OK)
                 {
-                    drawInterface(prompt.name, prompt.ops);
+                    createEntity(prompt.name, prompt.fields, prompt.ops);
+                }
+            }
+
+        }
+
+        public void createInterface()
+        {
+            using (InterfaceForm prompt = new InterfaceForm())
+            {
+                DialogResult result = prompt.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    createEntity(prompt.name, null, prompt.ops);
                 }
             }
         }
 
-        private void drawInterface(String name, String[] ops)
+        private void createEntity(String name, String[] fields, String[] ops)
         {
             Slide slide = Globals.ThisAddIn.Application.ActiveWindow.View.Slide;
             int heightMultiplier = 20;
+            int fieldsLength = 0;
 
-            Shape rectTop = slide.Shapes.AddShape(
-                Microsoft.Office.Core.MsoAutoShapeType.msoShapeRectangle, 0, 0, 100, heightMultiplier * 2);
-            rectTop.Fill.ForeColor.RGB = (int) XlRgbColor.rgbWheat;
-            rectTop.Line.ForeColor.RGB = (int) XlRgbColor.rgbBlack;
-            rectTop.Name = "rect_top";
-            Shape rectBottom = slide.Shapes.AddShape(
-                Microsoft.Office.Core.MsoAutoShapeType.msoShapeRectangle, 0, heightMultiplier * 2, 100, heightMultiplier * ops.Length);
-            rectBottom.Fill.ForeColor.RGB = (int)XlRgbColor.rgbWheat;
-            rectBottom.Line.ForeColor.RGB = (int)XlRgbColor.rgbBlack;
-            rectBottom.Name = "rect_bottom";
-
-            Shape labelName = slide.Shapes.AddLabel(
-                Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal, 0, 0, 0, 0);
-            labelName.TextFrame.TextRange.Text = "<<Interface>>\n" + name;
-            labelName.TextEffect.FontSize = 10;
-            labelName.TextEffect.FontBold = Microsoft.Office.Core.MsoTriState.msoCTrue;
-            labelName.Name = name;
-            
-
-            for (int i = 0; i < ops.Length; i++)
-            {
-                Shape labelOp = slide.Shapes.AddLabel(
-                Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal, 0, heightMultiplier * (i+2), 0, 0);
-                labelOp.TextFrame.TextRange.Text = ops[i];
-                labelOp.TextEffect.FontSize = 10;
-                labelOp.Name = ops[i];
-            }
-
-            String[] temp = { "rect_top", "rect_bottom", name };
-            String[] shapes = new string[temp.Length + ops.Length];
-            temp.CopyTo(shapes, 0);
-            ops.CopyTo(shapes, temp.Length);
-            slide.Shapes.Range(shapes).Group();
-        }
-
-        private void drawClass(String name, String[] fields, String[] ops)
-        {
-            Slide slide = Globals.ThisAddIn.Application.ActiveWindow.View.Slide;
-            int heightMultiplier = 20;
-
+            // create name section
             Shape rectTop = slide.Shapes.AddShape(
                 Microsoft.Office.Core.MsoAutoShapeType.msoShapeRectangle, 0, 0, 100, heightMultiplier);
             rectTop.Fill.ForeColor.RGB = (int)XlRgbColor.rgbWheat;
             rectTop.Line.ForeColor.RGB = (int)XlRgbColor.rgbBlack;
-            rectTop.Name = "rect_top";
-            Shape rectMiddle = slide.Shapes.AddShape(
-                Microsoft.Office.Core.MsoAutoShapeType.msoShapeRectangle, 0, heightMultiplier, 100, heightMultiplier * fields.Length);
-            rectMiddle.Fill.ForeColor.RGB = (int)XlRgbColor.rgbWheat;
-            rectMiddle.Line.ForeColor.RGB = (int)XlRgbColor.rgbBlack;
-            rectMiddle.Name = "rect_middle";
-            Shape rectBottom = slide.Shapes.AddShape(
-                Microsoft.Office.Core.MsoAutoShapeType.msoShapeRectangle,
-                0, heightMultiplier * (fields.Length + 1), 100, heightMultiplier * ops.Length);
-            rectBottom.Fill.ForeColor.RGB = (int)XlRgbColor.rgbWheat;
-            rectBottom.Line.ForeColor.RGB = (int)XlRgbColor.rgbBlack;
-            rectBottom.Name = "rect_bottom";
-
+            rectTop.Name = "rect_top" + objectCount;
+            // print the name
             Shape labelName = slide.Shapes.AddLabel(
-                Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal, 0, 0, 0, 0);
-            labelName.TextFrame.TextRange.Text = name;
+                Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal, 0, -15, 0, 0);
+            labelName.TextFrame.TextRange.Text = "<<interface>>\n" + name;
             labelName.TextEffect.FontSize = 10;
             labelName.TextEffect.FontBold = Microsoft.Office.Core.MsoTriState.msoCTrue;
-            labelName.Name = name;
+            labelName.Name = name + objectCount;
 
-            // print fields
-            for (int i = 0; i < fields.Length; i++)
+            // wxecute for classes only
+            if (fields != null)
             {
-                Shape labelField = slide.Shapes.AddLabel(
-                    Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal, 0, heightMultiplier * (i + 1), 0, 0);
-                labelField.TextFrame.TextRange.Text = fields[i];
-                labelField.TextEffect.FontSize = 10;
-                labelField.Name = fields[i];
+                labelName.TextFrame.TextRange.Text = name;
+                fieldsLength = fields.Length;
+                // create fields section
+                Shape rectMiddle = slide.Shapes.AddShape(
+                Microsoft.Office.Core.MsoAutoShapeType.msoShapeRectangle, 0, heightMultiplier, 100, heightMultiplier * fields.Length);
+                rectMiddle.Fill.ForeColor.RGB = (int)XlRgbColor.rgbWheat;
+                rectMiddle.Line.ForeColor.RGB = (int)XlRgbColor.rgbBlack;
+                rectMiddle.Name = "rect_middle" + objectCount;
+                // print fields
+                
+                for (int i = 0; i < fields.Length; i++)
+                {
+                    Shape labelField = slide.Shapes.AddLabel(
+                        Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal, 0, heightMultiplier * (i + 1), 0, 0);
+                    labelField.TextFrame.TextRange.Text = fields[i];
+                    labelField.TextEffect.FontSize = 10;
+                    fields[i] = fields[i] + objectCount;
+                    labelField.Name = fields[i];
+                }
             }
+
+            // creates operations section
+            Shape rectBottom = slide.Shapes.AddShape(
+                Microsoft.Office.Core.MsoAutoShapeType.msoShapeRectangle,
+                0, heightMultiplier * (fieldsLength + 1), 100, heightMultiplier * ops.Length);
+            rectBottom.Fill.ForeColor.RGB = (int)XlRgbColor.rgbWheat;
+            rectBottom.Line.ForeColor.RGB = (int)XlRgbColor.rgbBlack;
+            rectBottom.Name = "rect_bottom" + objectCount;
             // print operations
             for (int i = 0; i < ops.Length; i++)
             {
                 Shape labelOp = slide.Shapes.AddLabel(
                     Microsoft.Office.Core.MsoTextOrientation.msoTextOrientationHorizontal,
-                    0, heightMultiplier * (fields.Length + i + 1), 0, 0);
+                    0, heightMultiplier * (fieldsLength + i + 1), 0, 0);
                 labelOp.TextFrame.TextRange.Text = ops[i];
                 labelOp.TextEffect.FontSize = 10;
+                ops[i] = ops[i] + objectCount;
                 labelOp.Name = ops[i];
             }
 
-            String[] temp = { "rect_top", "rect_middle", "rect_bottom", name };
-            String[] shapes = new string[temp.Length+ fields.Length + ops.Length];
-            temp.CopyTo(shapes, 0);
-            fields.CopyTo(shapes, temp.Length);
-            ops.CopyTo(shapes, temp.Length + fields.Length);
+
+            String[] shapes;
+
+            if (fields != null)
+            {
+                String[] temp = { "rect_top" + objectCount,
+                "rect_middle" + objectCount,
+                "rect_bottom" + objectCount, name + objectCount };
+                shapes = new string[temp.Length + fields.Length + ops.Length];
+                temp.CopyTo(shapes, 0);
+                fields.CopyTo(shapes, temp.Length);
+                ops.CopyTo(shapes, temp.Length + fields.Length);
+            }
+            else
+            {
+                String[] temp = { "rect_top" + objectCount,
+                "rect_bottom" + objectCount, name + objectCount };
+                shapes = new string[temp.Length + ops.Length];
+                temp.CopyTo(shapes, 0);
+                ops.CopyTo(shapes, temp.Length);
+            }
+
+            
             slide.Shapes.Range(shapes).Group();
+            objectCount++;
         }
 
-        private void btn_associ_Click(object sender, RibbonControlEventArgs e)
+        
+
+        public void createAssociation()
+        {
+            createRelation(ASSOCIATION);
+            
+        }
+
+        public void createAggregation()
+        {
+            createRelation(AGGREGATION);
+            
+        }
+
+        public void createComposition()
+        {
+            createRelation(COMPOSTION);
+            
+        }
+
+        public void createGeneralization()
+        {
+            createRelation(GENERALIZATION);
+      
+        }
+
+        public void createImplementation()
+        {
+            createRelation(IMPLEMENTATION);
+
+        }
+
+        private void createRelation(int type)
         {
             Slide Slide = Globals.ThisAddIn.Application.ActiveWindow.View.Slide;
 
-            Shape line = Slide.Shapes.AddShape(
-                Microsoft.Office.Core.MsoAutoShapeType.msoShapeRectangle, 0, 0, 75, 2);
-            line.Fill.ForeColor.RGB = (int)XlRgbColor.rgbBlack;
-            line.Line.ForeColor.RGB = (int)XlRgbColor.rgbBlack;
-        }
-
-        private void btn_aggr_Click(object sender, RibbonControlEventArgs e)
-        {
-            Slide Slide = Globals.ThisAddIn.Application.ActiveWindow.View.Slide;
             // create line
-            Shape compLine = Slide.Shapes.AddShape(
-                Microsoft.Office.Core.MsoAutoShapeType.msoShapeRectangle, 5, 4, 75, 2);
-            compLine.Fill.ForeColor.RGB = (int)XlRgbColor.rgbBlack;
-            compLine.Line.ForeColor.RGB = (int)XlRgbColor.rgbBlack;
-            compLine.Name = "line";
-            // create empty diamond
-            Shape compDiamond = Slide.Shapes.AddShape(
-                Microsoft.Office.Core.MsoAutoShapeType.msoShapeDiamond, 0, 0, 10, 10);
-            compDiamond.Fill.ForeColor.RGB = (int)XlRgbColor.rgbWhite;
-            compDiamond.Line.ForeColor.RGB = (int)XlRgbColor.rgbBlack;
-            compDiamond.Line.Weight = 3;
-            compDiamond.Name = "diamond";
-
-            String[] shapes = { "line", "diamond" };
-            Slide.Shapes.Range(shapes).Group();
-        }
-
-        private void btn_comps_Click(object sender, RibbonControlEventArgs e)
-        {
-            Slide Slide = Globals.ThisAddIn.Application.ActiveWindow.View.Slide;
-            // create line
-            Shape compLine = Slide.Shapes.AddShape(
-                Microsoft.Office.Core.MsoAutoShapeType.msoShapeRectangle, 5, 4, 75, 2);
-            compLine.Fill.ForeColor.RGB = (int) XlRgbColor.rgbBlack;
-            compLine.Line.ForeColor.RGB = (int)XlRgbColor.rgbBlack;
-            compLine.Name = "line";
-            // create filled diamond
-            Shape compDiamond = Slide.Shapes.AddShape(
-                Microsoft.Office.Core.MsoAutoShapeType.msoShapeDiamond, 0, 0, 10, 10);
-            compDiamond.Fill.ForeColor.RGB = (int) XlRgbColor.rgbBlack;
-            compDiamond.Line.ForeColor.RGB = (int)XlRgbColor.rgbBlack;
-            compDiamond.Name = "diamond";
-
-            String[] shapes = { "line", "diamond" };
-            Slide.Shapes.Range(shapes).Group();
-        }
-
-        private void btn_gener_Click(object sender, RibbonControlEventArgs e)
-        {
-            Slide Slide = Globals.ThisAddIn.Application.ActiveWindow.View.Slide;
-            // create line
-            Shape compLine = Slide.Shapes.AddShape(
-                Microsoft.Office.Core.MsoAutoShapeType.msoShapeRectangle, 0, 4, 75, 2);
-            compLine.Fill.ForeColor.RGB = (int)XlRgbColor.rgbBlack;
-            compLine.Line.ForeColor.RGB = (int)XlRgbColor.rgbBlack;
-            compLine.Name = "line";
-            // create triangel
-            Shape compTriangle = Slide.Shapes.AddShape(
-                Microsoft.Office.Core.MsoAutoShapeType.msoShapeIsoscelesTriangle, 73, 0, 15, 10);
-            compTriangle.Fill.ForeColor.RGB = (int)XlRgbColor.rgbWhite;
-            compTriangle.Line.ForeColor.RGB = (int)XlRgbColor.rgbBlack;
-            compTriangle.Line.Weight = 3;
-            compTriangle.Rotation = 90;
-            compTriangle.Name = "triangel";
-
-            String[] shapes = { "line", "triangel" };
-            Slide.Shapes.Range(shapes).Group();
-        }
-
-        private void btn_impl_Click(object sender, RibbonControlEventArgs e)
-        {
-            Slide Slide = Globals.ThisAddIn.Application.ActiveWindow.View.Slide;
-            // create line
-            Shape compLine = Slide.Shapes.AddShape(
+            Shape compLine;
+            if (type == AGGREGATION || type == COMPOSTION)
+            {
+                compLine = Slide.Shapes.AddShape(
+                Microsoft.Office.Core.MsoAutoShapeType.msoShapeRectangle, 5, 4, 75, 0);
+            }
+            else
+            {
+                compLine = Slide.Shapes.AddShape(
                 Microsoft.Office.Core.MsoAutoShapeType.msoShapeRectangle, 0, 4, 75, 0);
+            }
+            
             compLine.Fill.ForeColor.RGB = (int)XlRgbColor.rgbBlack;
             compLine.Line.ForeColor.RGB = (int)XlRgbColor.rgbBlack;
-            compLine.Line.DashStyle = Microsoft.Office.Core.MsoLineDashStyle.msoLineRoundDot;
             compLine.Line.Weight = 3;
-            compLine.Name = "line";
-            // create triangel
-            Shape compTriangle = Slide.Shapes.AddShape(
-                Microsoft.Office.Core.MsoAutoShapeType.msoShapeIsoscelesTriangle, 73, 0, 15, 10);
-            compTriangle.Fill.ForeColor.RGB = (int)XlRgbColor.rgbWhite;
-            compTriangle.Line.ForeColor.RGB = (int)XlRgbColor.rgbBlack;
-            compTriangle.Line.Weight = 3;
-            compTriangle.Rotation = 90;
-            compTriangle.Name = "triangel";
+            compLine.Name = "line" + objectCount;
 
-            String[] shapes = { "line", "triangel" };
-            Slide.Shapes.Range(shapes).Group();
+
+            // create head of relation
+            Shape compHead = null;
+            
+            switch (type)
+            {
+                case AGGREGATION:
+                    compHead = Slide.Shapes.AddShape(
+                Microsoft.Office.Core.MsoAutoShapeType.msoShapeDiamond, 0, 0, 10, 10);
+                    break;
+
+                case COMPOSTION:
+                    compHead = Slide.Shapes.AddShape(
+                Microsoft.Office.Core.MsoAutoShapeType.msoShapeDiamond, 0, 0, 10, 10);
+                    break;
+
+                case GENERALIZATION:
+                    compHead = Slide.Shapes.AddShape(
+                Microsoft.Office.Core.MsoAutoShapeType.msoShapeIsoscelesTriangle, 73, 0, 15, 10);
+                    compHead.Rotation = 90;
+                    break;
+
+                case IMPLEMENTATION:
+                    compHead = Slide.Shapes.AddShape(
+                Microsoft.Office.Core.MsoAutoShapeType.msoShapeIsoscelesTriangle, 73, 0, 15, 10);
+                    compHead.Rotation = 90;
+                    compLine.Line.DashStyle = Microsoft.Office.Core.MsoLineDashStyle.msoLineRoundDot;
+                    break;
+
+            }
+
+
+            if (compHead != null)
+            {
+                // fill the head if it is composition
+                if (type == COMPOSTION)
+                {
+                    compHead.Fill.ForeColor.RGB = (int)XlRgbColor.rgbBlack;
+                }
+                else
+                {
+                    compHead.Fill.ForeColor.RGB = (int)XlRgbColor.rgbWhite;
+                }
+
+                compHead.Line.ForeColor.RGB = (int)XlRgbColor.rgbBlack;
+                compHead.Line.Weight = 3;
+                compHead.Name = "head" + objectCount;
+
+                // groups relation object components
+                String[] shapes = { "line" + objectCount, "head" + objectCount };
+                Slide.Shapes.Range(shapes).Group();
+            }
+       
+            objectCount++;
         }
     }
 }

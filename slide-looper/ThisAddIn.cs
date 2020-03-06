@@ -19,11 +19,6 @@ namespace slide_looper
         {
         }
 
-        bool hasSection()
-        {
-            return Application.ActivePresentation.HasSections;
-        }
-
         #region VSTO generated code
 
         /// <summary>

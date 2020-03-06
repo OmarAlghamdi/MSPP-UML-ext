@@ -36,8 +36,8 @@
         {
             this.tab1 = this.Factory.CreateRibbonTab();
             this.group1 = this.Factory.CreateRibbonGroup();
-            this.group2 = this.Factory.CreateRibbonGroup();
             this.sections = this.Factory.CreateRibbonButton();
+            this.group2 = this.Factory.CreateRibbonGroup();
             this.btn_class = this.Factory.CreateRibbonButton();
             this.btn_interface = this.Factory.CreateRibbonButton();
             this.btn_associ = this.Factory.CreateRibbonButton();
@@ -55,7 +55,7 @@
             this.tab1.ControlId.ControlIdType = Microsoft.Office.Tools.Ribbon.RibbonControlIdType.Office;
             this.tab1.Groups.Add(this.group1);
             this.tab1.Groups.Add(this.group2);
-            this.tab1.Label = "TabAddIns";
+            this.tab1.Label = "OmarAlghamdi-UML";
             this.tab1.Name = "tab1";
             // 
             // group1
@@ -63,6 +63,15 @@
             this.group1.Items.Add(this.sections);
             this.group1.Label = "task-1";
             this.group1.Name = "group1";
+            // 
+            // sections
+            // 
+            this.sections.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+            this.sections.Image = global::slide_looper.Properties.Resources.baseline_menu_black_48dp;
+            this.sections.Label = "Get Sections";
+            this.sections.Name = "sections";
+            this.sections.ShowImage = true;
+            this.sections.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.sections_Click);
             // 
             // group2
             // 
@@ -75,15 +84,6 @@
             this.group2.Items.Add(this.btn_impl);
             this.group2.Label = "UML";
             this.group2.Name = "group2";
-            // 
-            // sections
-            // 
-            this.sections.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
-            this.sections.Image = global::slide_looper.Properties.Resources.baseline_menu_black_48dp;
-            this.sections.Label = "Get Sections";
-            this.sections.Name = "sections";
-            this.sections.ShowImage = true;
-            this.sections.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.sections_Click);
             // 
             // btn_class
             // 
