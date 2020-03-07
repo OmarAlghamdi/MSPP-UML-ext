@@ -28,15 +28,15 @@ namespace slide_looper
 
         private void btn_ok_Click(object sender, EventArgs e)
         {
-            if (tb_name.Text == "")
-            {
-                label1.ForeColor = Color.Red;
-                return;
-            }
-            name = tb_name.Text;
-            ops = tb_ops.Text.Split(';');
-            DialogResult = DialogResult.OK;
-            Close();
+ if (tb_name.Text == "")
+ {
+     label1.ForeColor = Color.Red;
+     return;
+ }
+ name = tb_name.Text;
+ ops = tb_ops.Text.Split(';');
+ DialogResult = DialogResult.OK;
+ Close();
         }
     }
 }
