@@ -164,6 +164,7 @@ namespace slide_looper
             // wxecute for classes only
             if (fields != null)
             {
+                labelName.Top = 0;
                 labelName.TextFrame.TextRange.Text = name;
                 fieldsLength = fields.Length;
                 // create fields section

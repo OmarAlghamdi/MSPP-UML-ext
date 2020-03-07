@@ -29,6 +29,16 @@ namespace slide_looper
 
         private void btn_ok_Click(object sender, EventArgs e)
         {
+            if (tb_name.Text == "")
+            {
+                label1.ForeColor = Color.Red;
+                return;
+            }
+            if (tb_ops.Text == "")
+            {
+                label3.ForeColor = Color.Red;
+                return;
+            }
             name = tb_name.Text;
             fields = tb_fileds.Text.Split(';');
             ops = tb_ops.Text.Split(';');
